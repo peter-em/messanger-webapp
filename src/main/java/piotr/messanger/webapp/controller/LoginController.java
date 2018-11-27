@@ -50,16 +50,16 @@ public class LoginController {
     public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName(REGISTRATION);
-        User byEmail = userService.findUserByEmail(user.getEmail());
-        User byLogin = userService.findUserByLogin(user.getLogin());
-        if (byEmail != null) {
+        User find = userService.findUserByEmail(user.getEmail());
+        if (find != null) {
             bindingResult
                     .rejectValue("email", "error.user",
                             "There is already a user registered with the email provided");
             return modelAndView;
         }
 
-        if (byLogin != null) {
+        find = userService.findUserByLogin(user.getLogin());
+        if (find != null) {
             bindingResult
                     .rejectValue("login", "error.user",
                             "This login is already taken");

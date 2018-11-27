@@ -16,6 +16,8 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    private static final String LOGIN = "/login";
+
     @Resource
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -44,20 +46,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                    .antMatchers("/", "/login", "/registration").permitAll()
+                    .antMatchers("/", LOGIN, "/registration").permitAll()
                     .antMatchers("/js/**", "/css/**", "/images/**").permitAll()
                     .antMatchers("/messanger", "/app", "/logout").hasAuthority("USER")
                     .anyRequest().authenticated()
                     .and()
                 .csrf().disable()
                 .formLogin()
-                    .loginPage("/login").failureUrl("/login?error=true")
+                    .loginPage(LOGIN).failureUrl("/login?error=true")
                     .defaultSuccessUrl("/messanger")
                     .usernameParameter("email")
                     .passwordParameter("password")
                     .and()
                 .logout()
-                    .logoutSuccessUrl("/login")
+                    .logoutSuccessUrl(LOGIN)
                     .permitAll();
     }
 
