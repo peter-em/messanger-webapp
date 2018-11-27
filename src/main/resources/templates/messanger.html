@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>New Messanger</title>
+    <link href="/css/messanger.css" rel="stylesheet">
+
+</head>
+<body>
+
+<noscript>
+    <h2>Sorry! Your browser doesn't support Javascript<br>
+    This web application requires JS, to work at all</h2>
+</noscript>
+
+<div id="app">
+    <div class="header">
+        <div id="username-div">
+            <h3 th:utext="${userName}" id="userName">User Login</h3>
+        </div>
+        <div id="app-title">
+            <h3>Messanger Web App</h3>
+        </div>
+        <div id="logout">
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    <div id="app-main">
+
+        <div id="users-div" class="app-main sidepanel">
+
+            <div class="list-header">
+                <label>Active Users: </label>
+                <label id="user-count">0</label>
+            </div>
+            <div id="users-list" class="list">
+            </div>
+
+        </div>
+
+        <div id="convs-div" class="app-main sidepanel">
+
+            <div class="list-header">
+                <label>Conversations</label>
+            </div>
+
+            <div id="convs-list" class="list">
+            </div>
+        </div>
+
+        <div id="conversation" class="app-main">
+            <div id="header-panel" class="list-header">
+                <label id="conv-partner"></label>
+            </div>
+
+            <div id="messages-container">
+            </div>
+
+            <div id="input-panel">
+                <div id="textarea-container">
+                    <textarea id="text" placeholder="Write Your message"></textarea>
+                    <div class="textarea-size"></div>
+                </div>
+                <div id="button-container">
+                    <button id="msg-btn" class="button" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+    </div>
+</div>
+
+<script src="/webjars/sockjs-client/sockjs.min.js"></script>
+<script src="/webjars/stomp-websocket/stomp.min.js"></script>
+<script src="/lib/jquery-3.3.1.js"></script>
+
+<script src="/js/messanger-look.js"></script>
+<script src="/js/messanger-behavior.js"></script>
+<script src="/js/conv-window.js"></script>
+
+</body>
+</html>
