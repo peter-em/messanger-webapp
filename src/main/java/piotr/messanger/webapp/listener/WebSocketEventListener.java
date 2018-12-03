@@ -38,7 +38,6 @@ public class WebSocketEventListener {
 
             List<String> sessionIds = connectionService.getSessionIds(userEntity.getLogin());
             if (sessionIds.isEmpty()) {
-                log.info("Received authenticated web socket connection");
                 messagingTemplate.convertAndSend("/server/user.login", userEntity.getLogin());
             }
             connectionService.addSession(headers.getSessionId(), userEntity.getLogin());
@@ -60,7 +59,6 @@ public class WebSocketEventListener {
 
         if (sessionIds.isEmpty()) {
             messagingTemplate.convertAndSend("/server/user.logout", userEntity.getLogin());
-            log.info("User disconnecting: {}", userEntity.getLogin());
         }
     }
 }

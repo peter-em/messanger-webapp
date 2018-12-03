@@ -2,9 +2,9 @@
 
 
 function createMessage(author, content, time) {
-    var message = document.createElement("div");
+    let message = document.createElement("div");
     message.classList.add("message");
-    var element = document.createElement("div");
+    let element = document.createElement("div");
     element.classList.add("author-div");
     element.innerText = author;
     message.appendChild(element);
@@ -26,30 +26,38 @@ class Conversation {
         this.partner = partner;
         this.newMsgCounter = 0;
         this.oldestTime = $.now();
+        this.hasOlderMsg = false;
         this.previewContainer = previewContainer;
         this.messagesContainer = document.createElement("div");
         this.messagesContainer.classList.add("messages")
     }
 
-    addUserMessage(author, content, time) {
-        var timeFormatted = formatTime(time);
+    setPreviewMessage(author, content, time, newCounter) {
+        let timeFormatted = formatTime(new Date(time));
+        this.newMsgCounter = newCounter;
+        this.oldestTime = time;
+        this.hasOlderMsg = true;
         this.messagesContainer.appendChild(createMessage(author, content, timeFormatted));
-        this.previewContainer.updateContent(0, timeFormatted, content);
-    }
-
-    addIncomingMessage(author, content, time) {
-        var timeFormatted = formatTime(time);
-        this.messagesContainer.appendChild(createMessage(author, content, timeFormatted));
-        var active = $("#conv-partner").text();
-    
-        if (this.partner != active) {
-            this.newMsgCounter++;
-        }
         this.previewContainer.updateContent(this.newMsgCounter, timeFormatted, content);
     }
 
+    addNewMessage(author, content, time) {
+        let timeFormatted = formatTime(time);
+        this.messagesContainer.appendChild(createMessage(author, content, timeFormatted));
+        
+        if (this.partner != convPartner) {
+            this.newMsgCounter++;
+        }
+        this.previewContainer.updateContent(this.newMsgCounter, timeFormatted, content);
+
+        if (this.messagesContainer.parentNode != null) {
+            $("#scrollable").scrollTop(this.messagesContainer.scrollHeight);
+        }
+    }
+
     addArchivedMessage(author, content, time) {
-        this.messagesContainer.firstChild.insertBefore(createMessage(author, content, time));
+        let foramtted = formatTime(new Date(time));
+        this.messagesContainer.insertBefore(createMessage(author, content, foramtted), this.messagesContainer.firstChild);
         this.oldestTime = time;
     }
 
@@ -69,27 +77,27 @@ class Preview {
     }
 
     createContainer() {
-        var details = document.createElement("div");
+        let details = document.createElement("div");
         details.classList.add("cupper");
-        var user = document.createElement("div");
+        let user = document.createElement("div");
         user.classList.add("cuser");
         user.innerText = this.partner;
         details.appendChild(user);
         
-        var counter = document.createElement("div");
+        let counter = document.createElement("div");
         counter.classList.add("ccountr");
         details.appendChild(counter);
         this.counter = counter;
         
-        var time = document.createElement("div");
+        let time = document.createElement("div");
         time.classList.add("ctime");
         details.appendChild(time);
         this.newestTime = time;
 
-        var container = document.createElement("div");
+        let container = document.createElement("div");
         container.classList.add("conv");
         container.appendChild(details);
-        var demo = document.createElement("div");
+        let demo = document.createElement("div");
         demo.classList.add("cdemo");
         container.appendChild(demo);
         this.demo = demo;

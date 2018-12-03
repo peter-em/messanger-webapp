@@ -19,3 +19,9 @@ $("#text").keypress(function(event) {
         sendMessage();
     }
 });
+
+$("#scrollable").scroll(function() {
+    if ($(this).scrollTop() === 0) {
+        loadArchived();
+    }
+})

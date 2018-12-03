@@ -24,13 +24,13 @@ import java.util.Set;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private int id;
 
     @Column(name = "email")
     @Email(message = "*Please provide a valid Email")
-    @NotEmpty(message = "*Please provide an email")
+//    @NotEmpty(message = "*Please provide an email")
     private String email;
 
     @Column(name = "password")
@@ -39,7 +39,7 @@ public class User {
 
     @Column(name = "login")
     @NotEmpty(message = "*Please provide your login")
-    @Length(min = 5, message = "*Your login must have at least 3 characters")
+//    @Length(min = 3, message = "*Your login must have at least 3 characters")
     private String login;
 
     @Column(name = "active")

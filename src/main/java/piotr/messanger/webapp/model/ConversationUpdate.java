@@ -5,16 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ServerMessage {
+public class ConversationUpdate {
 
-    private String type;
     private String partner;
-    private List<MessageDto> messages;
-
+//    private int unreadCount;
+    private MessageDto message;
 }
