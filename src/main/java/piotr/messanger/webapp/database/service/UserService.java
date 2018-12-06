@@ -10,6 +10,7 @@ import piotr.messanger.webapp.database.repository.UserRepository;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 @Service("userService")
 public class UserService {
@@ -41,6 +42,15 @@ public class UserService {
         Role userRole = roleRepository.findByRoleName("USER");
         user.setRoleEntities(new HashSet<>(Collections.singletonList(userRole)));
         return userRepository.save(user);
+    }
+
+    public void updateLastActive(User user) {
+        user.setLastActive(null);
+        userRepository.save(user);
+    }
+
+    public List<String> getLogins() {
+        return userRepository.getLogins();
     }
 
 }

@@ -32,9 +32,7 @@ public class MessageService {
         long count = msgRepo.count(query, convId);
         query.skip(count - archivedSize);
 
-        List<Message> list = msgRepo.find(query, Message.class, convId);
-        Collections.reverse(list);
-        return list;
+        return msgRepo.find(query, Message.class, convId);
     }
 
     public Message getLastMessage(String convId) {

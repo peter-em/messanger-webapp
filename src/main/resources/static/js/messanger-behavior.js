@@ -9,10 +9,11 @@ let usersContainer = {};
 let convsArray = [];
 let textArea = {};
 let offsetInMilliSec = (new Date()).getTimezoneOffset() * 60 * 1000;
+let localLang = "";
 
 function loginClicked(login) {
 
-    let loginStr = login.innerText;
+    let loginStr = login.lastChild.innerText;
 
     let conv = convsArray[loginStr];
     if (conv === undefined) {
@@ -34,42 +35,66 @@ function createConversationObj(login) {
 }
 
 function updateUsersCount() {
-    $("#user-count").text(users.length.toString());
+    let count = users.length - document.getElementsByClassName("offline").length;
+    $("#active-count").text(count.toString());
 }
 
-function prepareUserNode(userName) {
-    let newUser = document.createElement('div');
+function prepareUserNode(login) {
+    let newUser = document.createElement("li")
+
+    let div = document.createElement("div");
+    div.classList.add("u-active", "offline");
+    let span = document.createElement("span");
+    span.classList.add("dot");
+    div.appendChild(span);
+    newUser.appendChild(div);
+    div = document.createElement("div");
+    div.classList.add("u-label");
+    div.innerText = login;
+    newUser.appendChild(div);
+
     newUser.classList.add('user');
-    newUser.innerText = userName;
     newUser.addEventListener("click", function() {
         loginClicked(this);
     });
     return newUser;
 }
 
+function setOffline(user) {
+    user.firstElementChild.classList.add("offline")
+}
+
+function setOnline(user) {
+    user.firstElementChild.classList.remove("offline");
+}
+
 function addUser(user) {
 
-    users.push(user);
-    users.sort();
     let index = users.indexOf(user);
-
-    if (index < users.length - 1) {
-        let node = usersContainer.children[index+1];
-        usersContainer.insertBefore(prepareUserNode(user), node);
-    } else {
-        usersContainer.appendChild(prepareUserNode(user));
+    if (index < 0) {
+        users.push(user);
+        users.sort();
+        index = users.indexOf(user);
+        if (index < users.length - 1) {
+            let node = usersContainer.children[index];
+            usersContainer.insertBefore(prepareUserNode(user), node);
+        } else {
+            usersContainer.appendChild(prepareUserNode(user));
+        }
     }
+
+    setOnline(usersContainer.children[index]);
     updateUsersCount();
 }
+
 
 function removeUser(user) {
     let index = users.indexOf(user);
     if (index < 0) {
         return;
     }
-    users.splice(index);
 
-    usersContainer.removeChild(usersContainer.children[index]);
+    setOffline(usersContainer.children[index]);
     updateUsersCount();
 }
 
@@ -79,12 +104,17 @@ function readInitialData(body) {
     let initializer = JSON.parse(body);
     
     // initialize list of active users section
-    users = initializer.activeUsers;
-    let userIndex = users.indexOf(userName);
-    users.splice(userIndex, 1);
+    users = initializer.onlineUsers.concat(initializer.offlineUsers);
+    console.log(users);
+    // let userIndex = users.indexOf(userName);
+    // users.splice(userIndex, 1);
     users.sort();
     for (let i = 0; i < users.length; i++) {
-        usersContainer.appendChild(prepareUserNode(users[i]));
+        let node = prepareUserNode(users[i]);
+        usersContainer.appendChild(node);
+        if (initializer.onlineUsers.includes(users[i])) {
+            setOnline(node);
+        }
     }
     updateUsersCount();
 
@@ -94,7 +124,8 @@ function readInitialData(body) {
         let conv = createConversationObj(preview.partner);
         convsArray[preview.partner] = conv;
         let msg = preview.message;
-        conv.setPreviewMessage(msg.author, msg.content, msg.time, 0);
+        preview.unreadCount = msg.author === userName ? 0 : preview.unreadCount;
+        conv.setPreviewMessage(msg.content, msg.time, preview.unreadCount);
     }
 }
 
@@ -109,7 +140,7 @@ window.addEventListener("load", function() {
     usersContainer = this.document.getElementById("users-list");
     textArea = this.document.getElementById("text");
     textArea.disabled = true;
-
+    localLang = this.window.navigator.language || this.window.navigator.userLanguage;
 });
 
 
@@ -199,7 +230,7 @@ function sendMessage() {
         return;
     }
     
-    convsArray[convPartner].addNewMessage(userName, content, new Date());
+    convsArray[convPartner].addNewMessage(userName, content, $.now());
     
     let destination = "/app/priv/" + convPartner;
     stompClient.send(destination, {}, JSON.stringify( {
@@ -212,21 +243,22 @@ function handleNewMessage(rawMessage) {
 
     let data = JSON.parse(rawMessage);
 
-    let conv = convsArray[data.partner];
+    let conv = convsArray[data.author];
     if (conv === undefined) {
-        conv = createConversationObj(data.partner);
-        convsArray[data.partner] = conv;
+        conv = createConversationObj(data.author);
+        convsArray[data.author] = conv;
     }
 
-    conv.addNewMessage(data.message.author,
-        data.message.content,
-        new Date(data.message.time));
+    conv.addNewMessage(data.author,
+        data.content,
+        new Date(data.time));
 }
 
 function handleArchivedMessages(rawMessage) {
     let data = JSON.parse(rawMessage);
     let conv = convsArray[data.partner];
 
+    data.messages.reverse();
     let container = conv.messagesContainer;
     let oldHeight = container.scrollHeight;
     for (let i = 0; i < data.messages.length; ++i) {

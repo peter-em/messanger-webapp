@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import java.security.Principal;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -34,7 +35,7 @@ public class MessageController {
     /* this annotation handles user request for archived messages */
     @MessageMapping("/priv/archive/{username}")
     @SendTo("/conv/archive/{username}")
-    public ArchivedMessages greeting(@DestinationVariable String username,
+    public ArchivedMessages handleArchiveRequest(@DestinationVariable String username,
                                      @Payload ClientRequest request) throws Exception {
 
         return new ArchivedMessages(
@@ -45,28 +46,39 @@ public class MessageController {
     }
 
     @SubscribeMapping("/activeclients")
-    public UserDataPreviewContainer retrieveActiveClients(Principal principal) {
+    public UserDataPreviewContainer getInitialData(Principal principal) {
 
         User user = userService.findUserByEmail(principal.getName());
         List<ConversationUpdate> previewList = new LinkedList<>();
+
         convService.getUserConversations(user.getLogin()).forEach(conv -> {
             ConversationUpdate update = new ConversationUpdate(
                     conv.getFirst().equals(user.getLogin())?conv.getSecond():conv.getFirst(),
+                    conv.getUnread(),
                     messagesDatabase.getLastMessageOfConv(conv.getId())
             );
             previewList.add(update);
         });
-        return new UserDataPreviewContainer(connectionService.getUsernames(), previewList);
+
+        List<String> online = connectionService.getUsernames();
+        return new UserDataPreviewContainer(online,
+                userService.getLogins().stream()
+                    .filter(login -> !online.contains(login))
+                    .collect(Collectors.toList()),
+                previewList);
     }
 
-    @MessageMapping("/priv/{receiver}")
-    @SendTo("/conv/priv/{receiver}")
-    public ConversationUpdate privateConversation(@DestinationVariable String receiver,
-                                                  @Payload ClientRequest request) {
 
-        return new ConversationUpdate(
-                request.getUser(),
-                messagesDatabase.archiveMessage(request.getUser(), receiver, request.getContent())
-        );
+    @MessageMapping("/priv/{receiver}")
+    public void handlePrivateMessage(@DestinationVariable String receiver,
+                            @Payload ClientRequest request) {
+        boolean isOnline = connectionService.hasLogin(receiver);
+        MessageDto msg = messagesDatabase.archiveMessage(
+                request.getUser(), receiver, request.getContent(), !isOnline);
+
+
+        if (isOnline) {
+            messagingTemplate.convertAndSend("/conv/priv/" + receiver, msg);
+        }
     }
 }

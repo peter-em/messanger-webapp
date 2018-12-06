@@ -16,7 +16,6 @@ public class Message {
     private String id;
 
     private String author;
-//    private long time;
     private LocalDateTime time;
     private String content;
 }

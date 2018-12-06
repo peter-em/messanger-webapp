@@ -16,13 +16,11 @@ public class ConvService {
     @Resource
     private ConversationRepository convRepo;
 
-    public String getConversationId(String login1, String login2) {
+    public Conversation getConversationId(String login1, String login2) {
         SortedSet<String> clients = sortLogins(login1, login2);
 
-        Conversation conversation = convRepo.findByFirstAndSecond(clients.first(), clients.last())
+        return convRepo.findByFirstAndSecond(clients.first(), clients.last())
                 .orElseGet(() -> convRepo.save(new Conversation(clients.first(), clients.last())));
-
-        return conversation.getId();
     }
 
     public Conversation getConvOrDefault(String login1, String login2) {
@@ -36,5 +34,9 @@ public class ConvService {
 
     public List<Conversation> getUserConversations(String login) {
         return convRepo.findByFirstOrSecond(login, login);
+    }
+
+    public void updateUnread(Conversation conversation) {
+        convRepo.save(conversation);
     }
 }

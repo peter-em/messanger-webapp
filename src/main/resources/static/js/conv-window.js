@@ -1,11 +1,14 @@
 'use strict';
 
 
-function createMessage(author, content, time) {
+function createMessage(author, content, time, isOwner) {
     let message = document.createElement("div");
     message.classList.add("message");
     let element = document.createElement("div");
     element.classList.add("author-div");
+    if (isOwner) {
+        element.classList.add("owner");
+    }
     element.innerText = author;
     message.appendChild(element);
 
@@ -21,6 +24,18 @@ function createMessage(author, content, time) {
     return message;
 }
 
+function hasDayPassed(timeInMillis) {
+    return Math.ceil(($.now() - timeInMillis) / 3600000) > 23;
+}
+
+function formatDateTime(timeInMillis) {
+    let date = new Date(timeInMillis);
+    if (hasDayPassed(timeInMillis)) {
+        return date.toLocaleDateString(localLang, {day: "numeric", month: "short"});
+    } 
+    return date.toLocaleTimeString(localLang, {hour: "2-digit", minute: "2-digit"});
+}
+
 class Conversation {
     constructor(partner, previewContainer) {
         this.partner = partner;
@@ -32,18 +47,17 @@ class Conversation {
         this.messagesContainer.classList.add("messages")
     }
 
-    setPreviewMessage(author, content, time, newCounter) {
-        let timeFormatted = formatTime(new Date(time));
+    setPreviewMessage(content, time, newCounter) {
         this.newMsgCounter = newCounter;
-        this.oldestTime = time;
         this.hasOlderMsg = true;
-        this.messagesContainer.appendChild(createMessage(author, content, timeFormatted));
-        this.previewContainer.updateContent(this.newMsgCounter, timeFormatted, content);
+        this.previewContainer.updateContent(this.newMsgCounter, formatDateTime(time), content);
     }
 
     addNewMessage(author, content, time) {
-        let timeFormatted = formatTime(time);
-        this.messagesContainer.appendChild(createMessage(author, content, timeFormatted));
+        let timeFormatted = formatDateTime(time);
+
+        this.messagesContainer.appendChild(
+            createMessage(author, content, timeFormatted, author != this.partner));
         
         if (this.partner != convPartner) {
             this.newMsgCounter++;
@@ -56,8 +70,9 @@ class Conversation {
     }
 
     addArchivedMessage(author, content, time) {
-        let foramtted = formatTime(new Date(time));
-        this.messagesContainer.insertBefore(createMessage(author, content, foramtted), this.messagesContainer.firstChild);
+        this.messagesContainer.insertBefore(
+            createMessage(author, content, formatDateTime(time), author != this.partner),
+            this.messagesContainer.firstChild);
         this.oldestTime = time;
     }
 

@@ -14,8 +14,8 @@ public class ConnectionService {
     private Map<String, String> sessionMap = new ConcurrentHashMap<>();
 
 
-    public void addSession(String sessionId, String email) {
-        sessionMap.put(sessionId, email);
+    public void addSession(String sessionId, String login) {
+        sessionMap.put(sessionId, login);
     }
 
     public void removeSession(String sessionId) {
@@ -30,8 +30,11 @@ public class ConnectionService {
     }
 
     public List<String> getUsernames() {
-        return sessionMap.values().stream()
-                .distinct()
+        return sessionMap.values().stream().distinct()
                 .collect(Collectors.toList());
+    }
+
+    public boolean hasLogin(String login) {
+        return sessionMap.values().contains(login);
     }
 }

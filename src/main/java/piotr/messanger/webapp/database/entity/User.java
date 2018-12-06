@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -48,6 +49,10 @@ public class User {
     @Column(nullable = false, updatable = false)
     @CreatedDate
     private LocalDateTime registeredAt;
+
+//    @Column(nullable = false)
+    @LastModifiedDate
+    private LocalDateTime lastActive;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))

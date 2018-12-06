@@ -9,10 +9,10 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-//@NoArgsConstructor
 public class UserDataPreviewContainer {
 
-    private List<String> activeUsers;
+    private List<String> onlineUsers;
+    private List<String> offlineUsers;
     private List<ConversationUpdate> conversations;
 
 }

@@ -2,6 +2,7 @@ package piotr.messanger.webapp.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,7 @@ public class WebSocketEventListener {
 
     @Resource
     private SimpMessageSendingOperations messagingTemplate;
-//
+
     @Resource
     private ConnectionService connectionService;
 
@@ -41,6 +42,8 @@ public class WebSocketEventListener {
                 messagingTemplate.convertAndSend("/server/user.login", userEntity.getLogin());
             }
             connectionService.addSession(headers.getSessionId(), userEntity.getLogin());
+        } else {
+            throw new MessagingException(event.getUser().getName() + " - access denied");
         }
     }
 
@@ -58,6 +61,7 @@ public class WebSocketEventListener {
         List<String> sessionIds = connectionService.getSessionIds(userEntity.getLogin());
 
         if (sessionIds.isEmpty()) {
+            userService.updateLastActive(userEntity);
             messagingTemplate.convertAndSend("/server/user.logout", userEntity.getLogin());
         }
     }

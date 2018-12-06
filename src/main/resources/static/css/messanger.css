@@ -6,7 +6,7 @@ html, body {
 }
 
 #app {
-    width: 760px;
+    width: 800px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -24,7 +24,7 @@ html, body {
 }
 
 #username-div {
-    width: 140px;
+    width: 160px;
 }
 
 #app-title {
@@ -35,8 +35,12 @@ h3 {
     margin: 16px 0;
 }
 
+#userName {
+    color: darkcyan;
+}
+
 #logout {
-    width: 140px;
+    width: 160px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -79,26 +83,64 @@ a:focus {
 .list {
     flex: 1;
     padding: 2px;
-    /*display: table-cell;*/
     text-align: center;
     overflow-y: auto;
 }
 
-#users-list {
-    display: table-cell;
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    direction: ltr;
+    display: block;
+    font-size: 16px;
+    line-height: 30px;
+}
+
+li {
+    text-align: left;
+    transition: 0.2s;
+}
+
+li:hover {
+    cursor: pointer;
+    color: darkcyan;
 }
 
 .user {
     font-family: Consolas, monospace;
     font-weight: bold;
     text-decoration: none;
-    line-height: 30px;
+    padding-left: 4px;
+    display: block;
+    position: relative;
 }
 
-.user:hover {
-    background-color: #128ff2;
-    cursor: pointer;
+.u-active {
+    float: right; 
+    margin-right: 4px;
+}
 
+.u-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.u-label:hover {
+    white-space: normal;
+}
+
+.dot {
+    background-color: rgb(66,183,42);
+    display: inline-block;
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+}
+
+.offline {
+    display: none;
 }
 
 .app-main {
@@ -109,27 +151,22 @@ a:focus {
 .sidepanel {
     display: flex;
     flex-flow: column;
+    width: 160px;
 }
 
 /* conversations (rightside panel) styling */
 #convs-list {
-    /*min-height: 50px;*/
     margin-top: 4px;
 }
 
 .conv {
-    /*display: table-row;*/
     font-family: "Lato", Helvetica, Arial, sans-serif;
     font-size: 14px;
     border-bottom: 1px solid gray;
     margin-bottom: 8px;
     padding-bottom: 4px;
     text-align: left;
-    /*max-height: 70px;*/
-    /*height: 50px;*/
     height: 38px;
-    /*max-height: 52px;*/
-    /*background-color: #60a0e0;*/
 }
 
 .conv:hover {
@@ -161,7 +198,6 @@ a:focus {
     font-weight: bold;
     text-overflow: ellipsis;
     white-space: nowrap;
-    /* white-space: normal; */
     overflow: hidden;
 }
 
@@ -173,7 +209,6 @@ a:focus {
 
 .ctime {
     font-size: 11px;
-    /* width: 30px; */
     height: 15px;
     margin-left: 2px;
     text-align: right;
@@ -182,7 +217,6 @@ a:focus {
 
 /* users (leftside panel) styling */
 #users-div {
-    width: 140px;
     float: left;
     margin-right: 6px;
 }
@@ -235,7 +269,6 @@ td {
     min-height: 24px;
     padding: 6px 0;
     border-top: 1px solid #bbbbbb;
-    /* margin: 4px 1px; */
     margin: 4px 1px 0 1px;
 
     font-family: sans-serif;
@@ -246,12 +279,10 @@ td {
 .author-div {
     width: 64px;
     border-right: 1px solid #bbbbbb;
-    
 }
 
-.author {
-    font-size: 12px;
-    font-style: normal;
+.owner {
+    color: darkcyan;
 }
 
 .content-div {
@@ -266,9 +297,6 @@ td {
     border-left: 1px solid #bbbbbb;
     padding-left: 2px;
     text-align: right;
-    /*display: flex;*/
-    /*align-items: center;*/
-    /*justify-content: center;*/
 }
 
 .time {
@@ -324,7 +352,6 @@ textarea {
 }
 /* conv list window styles */
 #convs-div {
-    width: 140px;
     margin-left: 6px;
     float: right;
 }
