@@ -134,7 +134,7 @@ window.addEventListener("load", () => {
     connect();
     usersContainer = this.document.getElementById("users-list");
     textArea = this.document.getElementById("text");
-    textArea.disabled = true;
+    textArea.contentEditable = false;
     localLang = this.window.navigator.language || this.window.navigator.userLanguage;
 });
 
@@ -184,7 +184,8 @@ function disconnect() {
 
 function setConvWindow(conv, login) {
 
-    textArea.disabled = false;
+    // textArea.disabled = false;
+    textArea.contentEditable = true;
     if (convPartner === login) {
         return;
     }

@@ -5,7 +5,7 @@
 
 	<groupId>piotr.messanger</groupId>
 	<artifactId>webapp</artifactId>
-	<version>1.2.0-RELEASE</version>
+	<version>1.2.5-RELEASE</version>
 	<!--<packaging>war</packaging>-->
     <packaging>jar</packaging>
 

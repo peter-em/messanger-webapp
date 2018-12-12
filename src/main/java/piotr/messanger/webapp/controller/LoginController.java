@@ -52,21 +52,26 @@ public class LoginController {
 
     @PostMapping(value = "/registration")
     public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
+
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName(REGISTRATION);
-        User find = userService.findUserByEmail(user.getEmail());
-        if (find != null) {
-            bindingResult
-                    .rejectValue("email", "error.user",
-                            "There is already a user registered with the email provided");
+        if (bindingResult.hasFieldErrors()) {
             return modelAndView;
         }
 
-        find = userService.findUserByLogin(user.getLogin());
+        User find = userService.findUserByLogin(user.getLogin());
         if (find != null) {
             bindingResult
                     .rejectValue("login", "error.user",
-                            "This login is already taken");
+                            "*This login is already taken");
+            return modelAndView;
+        }
+
+        find = userService.findUserByEmail(user.getEmail());
+        if (find != null) {
+            bindingResult
+                    .rejectValue("email", "error.user",
+                            "*There is already a user registered with the email provided");
             return modelAndView;
         }
 

@@ -29,19 +29,20 @@ public class User {
     @Column(name = "user_id")
     private int id;
 
+
     @Column(name = "email")
-    @Email(message = "*Please provide a valid Email")
-//    @NotEmpty(message = "*Please provide an email")
+    @NotEmpty(message = "*Please provide an email")
+    @Email(message = "*Please provide a valid email")
     private String email;
 
+    @Column(name = "login")
+    @Length(min = 4, max = 24, message = "*Login lenght must be between 4 and 24")
+    private String login;
+
     @Column(name = "password")
-    @NotEmpty(message = "*Please provide your password")
+    @Length(min = 3, message = "*Your password must have at least 3 characters")
     private String password;
 
-    @Column(name = "login")
-    @NotEmpty(message = "*Please provide your login")
-//    @Length(min = 3, message = "*Your login must have at least 3 characters")
-    private String login;
 
     @Column(name = "active")
     private int active;
@@ -50,7 +51,6 @@ public class User {
     @CreatedDate
     private LocalDateTime registeredAt;
 
-//    @Column(nullable = false)
     @LastModifiedDate
     private LocalDateTime lastActive;
 

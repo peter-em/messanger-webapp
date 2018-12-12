@@ -1,5 +1,7 @@
 'use strict'
 
+var maskKeys = ["Shift", "Ctrl", "Alt",];
+
 function clearInputDiv(container) {
 
     while(container.lastChild) {
@@ -11,18 +13,24 @@ function clearInputDiv(container) {
 $("#text").keyup(function(event) {
 
     let area = document.getElementById("text");
+    
+    if (area.innerHTML.length > 0) {
+        document.getElementById("placeholder").classList.add("hiding");
+    }
+
     if (area.innerText.length < 1 || area.innerText === "\n") {
         clearInputDiv(area);
     }
 });
 
-$("#text").keypress(function(event) {
 
-    if (event.which != 8) {
+$("#text").keydown(function(event) {
+
+    if (event.key.length == 1) {
         document.getElementById("placeholder").classList.add("hiding");
     }
-
-    if (event.which == 13 && !event.shiftKey) {
+   
+    if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
         sendMessage();
     }
