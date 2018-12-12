@@ -10,6 +10,9 @@ function createMessage(author, content, time, isOwner) {
         element.classList.add("owner");
     }
     element.innerText = author;
+    element.addEventListener("click", () => {
+        message.lastElementChild.classList.toggle("hiding");
+    });
     message.appendChild(element);
 
     element = document.createElement("div");
@@ -19,18 +22,30 @@ function createMessage(author, content, time, isOwner) {
 
     element = document.createElement("div");
     element.classList.add("time-div");
+    element.classList.add("hiding");
     element.innerText = time;
     message.appendChild(element);
     return message;
+}
+
+function createTimeInfo(time) {
+    let div = document.createElement("div");
+    div.classList.add("time-info");
+    div.innerText = time;
+    return div;
 }
 
 function hasDayPassed(timeInMillis) {
     return Math.ceil(($.now() - timeInMillis) / 3600000) > 23;
 }
 
-function formatDateTime(timeInMillis) {
+function has10MinPassed(last, newest) {
+    return (newest - last) > 600000;
+}
+
+function formatDateTime(timeInMillis, hasDayPassed) {
     let date = new Date(timeInMillis);
-    if (hasDayPassed(timeInMillis)) {
+    if (hasDayPassed) {
         return date.toLocaleDateString(localLang, {day: "numeric", month: "short"});
     } 
     return date.toLocaleTimeString(localLang, {hour: "2-digit", minute: "2-digit"});
@@ -41,6 +56,7 @@ class Conversation {
         this.partner = partner;
         this.newMsgCounter = 0;
         this.oldestTime = $.now();
+        this.latestTime = 0;
         this.hasOlderMsg = false;
         this.previewContainer = previewContainer;
         this.messagesContainer = document.createElement("div");
@@ -50,11 +66,18 @@ class Conversation {
     setPreviewMessage(content, time, newCounter) {
         this.newMsgCounter = newCounter;
         this.hasOlderMsg = true;
-        this.previewContainer.updateContent(this.newMsgCounter, formatDateTime(time), content);
+        this.latestTime = time;
+        this.previewContainer.updateContent(this.newMsgCounter, formatDateTime(time, hasDayPassed(time)), content);
     }
 
     addNewMessage(author, content, time) {
-        let timeFormatted = formatDateTime(time);
+        let timeFormatted = formatDateTime(time, false);
+
+        // insert time-info div, when last message was over 10 minutes ago
+        if (has10MinPassed(this.latestTime, time)) {
+            this.messagesContainer.appendChild(createTimeInfo(timeFormatted));
+        }
+        this.latestTime = time;
 
         this.messagesContainer.appendChild(
             createMessage(author, content, timeFormatted, author != this.partner));
@@ -70,8 +93,22 @@ class Conversation {
     }
 
     addArchivedMessage(author, content, time) {
+        let formatted = formatDateTime(time, false);
+        if (hasDayPassed(time)) {
+            formatted = formatDateTime(time, true) + ", " + formatted;
+        }
+
+        if (has10MinPassed(time, this.oldestTime)) {
+
+            if (this.messagesContainer.hasChildNodes()) {
+                let oldestTime = this.messagesContainer.firstElementChild.lastElementChild.innerText;
+                this.messagesContainer.insertBefore(
+                    createTimeInfo(oldestTime), this.messagesContainer.firstChild);
+            }
+        }
+
         this.messagesContainer.insertBefore(
-            createMessage(author, content, formatDateTime(time), author != this.partner),
+            createMessage(author, content, formatted, author != this.partner),
             this.messagesContainer.firstChild);
         this.oldestTime = time;
     }
@@ -87,7 +124,7 @@ class Preview {
     constructor(partner) {
         this.partner = partner;
         this.counter = {};
-        this.newestTime = {};
+        this.newestTime = "";
         this.demo = {};
     }
 

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>New Messanger</title>
+    <link href="/css/messanger-wip.css" rel="stylesheet">
+
+</head>
+<body>
+
+<noscript>
+    <h2>Sorry! Your browser doesn't support Javascript<br>
+        This web application requires JS, to work at all</h2>
+</noscript>
+
+<div id="app">
+    <div class="header">
+        <div id="username-div">
+            <h3 th:utext="${userName}" id="userName">User Login</h3>
+        </div>
+        <div id="app-title">
+            <h3>Messanger Web App</h3>
+        </div>
+        <div id="logout">
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    <div id="app-main">
+
+        <br>
+        <h1>SERVER IS UNDERGOING<br>WEEKEND MAINTENANCE</h1><br>
+        <h1>PLEASE COME BACK LATER</h1><br>
+        <h1>SORRY FOR INCONVENIENCE</h1>
+    </div>
+</div>
+
+</body>
+</html>

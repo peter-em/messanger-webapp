@@ -2,10 +2,10 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5">
     <title>New Messanger</title>
     <link href="/css/messanger.css" rel="stylesheet">
-
+    <!-- <link href="messanger.css" rel="stylesheet"> -->
 </head>
 <body>
 
@@ -34,7 +34,14 @@
                 <label id="active-count">0</label>
             </div>
             <div class="list">
-                <ul id="users-list" ></ul>
+                <ul id="users-list" >
+                        <!-- <li class="user">
+                            <div class="u-active offline">
+                                <span class="dot"></span>
+                            </div>
+                            <div class="u-label">Login</div>
+                        </li> -->
+                </ul>
             </div>
         </div>
 
@@ -44,8 +51,7 @@
                 <label>Conversations</label>
             </div>
 
-            <div id="convs-list" class="list">
-            </div>
+            <div id="convs-list" class="list"></div>
         </div>
 
         <div id="conversation" class="app-main">
@@ -54,19 +60,26 @@
             </div>
 
             <div id="scrollable">
-                <table>
-                    <tbody><tr>
-                        <td id="messages-container"></td>
-                    </tr></tbody>
-                </table>
+                <div class="spreader"></div>
+                <div id="messages-container">
+                    <!-- <div class="messages">
+                        <div class="time-info">22:22</div>
+                        <div class="message">
+                            <div class="author-div">Login</div>
+                            <div class="content-div">
+                                    Sample content
+                            </div>
+                            <div class="time-div hiding">22:22</div>
+                        </div>
+                    </div> -->
+                </div>
             </div>
-
             <div id="input-panel">
                 <div id="textarea-container">
-                    <textarea id="text" placeholder="Write Your message" disabled></textarea>
-                    <div class="textarea-size"></div>
+                    <div id="placeholder">Write your message</div>
+                    <div id="text" contenteditable="true"></div>
                 </div>
-                <div id="button-container">
+                <div id="button-container" class="hiding">
                     <button id="msg-btn" class="button" onclick="sendMessage()">Send</button>
                 </div>
             </div>
@@ -76,13 +89,20 @@
     </div>
 </div>
 
+
+
 <script src="/webjars/sockjs-client/sockjs.min.js"></script>
 <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-<script src="/lib/jquery-3.3.1.js"></script>
+<script src="/lib/jquery-3.3.1.slim.min.js"></script>
+<!-- <script src="jquery-3.3.1.slim.min.js"></script> -->
 
 <script src="/js/messanger-look.js"></script>
+<!-- <script src="messanger-look.js"></script> -->
 <script src="/js/messanger-behavior.js"></script>
+<!-- <script src="messanger-behavior.js"></script> -->
 <script src="/js/conv-window.js"></script>
+
+<script src="/js/sound.js"></script>
 
 </body>
 </html>

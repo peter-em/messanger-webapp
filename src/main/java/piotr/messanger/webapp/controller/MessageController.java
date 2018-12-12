@@ -76,7 +76,6 @@ public class MessageController {
         MessageDto msg = messagesDatabase.archiveMessage(
                 request.getUser(), receiver, request.getContent(), !isOnline);
 
-
         if (isOnline) {
             messagingTemplate.convertAndSend("/conv/priv/" + receiver, msg);
         }

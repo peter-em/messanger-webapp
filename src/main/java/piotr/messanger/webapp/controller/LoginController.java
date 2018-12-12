@@ -26,6 +26,10 @@ public class LoginController {
     @GetMapping(value={"/", "/login"})
     public ModelAndView login(){
 
+        // temporary change
+//        if (hasUserAuthority()) {
+//            return new ModelAndView("redirect:/workinprogress");
+//        }
         if (hasUserAuthority()) {
             return new ModelAndView("redirect:/messanger");
         }
@@ -75,6 +79,13 @@ public class LoginController {
 
     @GetMapping(value = "/messanger")
     public ModelAndView messanger() {
+
+//        // temporary change
+//        if (hasUserAuthority()) {
+//            return new ModelAndView("redirect:/workinprogress");
+//        }
+
+
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByEmail(auth.getName());
@@ -82,6 +93,16 @@ public class LoginController {
         modelAndView.setViewName("messanger");
         return modelAndView;
     }
+
+//    @GetMapping(value = "/workinprogress")
+//    public ModelAndView workInProgress() {
+//        ModelAndView modelAndView = new ModelAndView();
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        User user = userService.findUserByEmail(auth.getName());
+//        modelAndView.addObject("userName", user.getLogin());
+//        modelAndView.setViewName("workinprogress");
+//        return modelAndView;
+//    }
 
     private boolean hasUserAuthority() {
         Object[] auth = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toArray();

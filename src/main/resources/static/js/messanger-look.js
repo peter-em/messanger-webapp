@@ -1,19 +1,27 @@
-let textContainer, textareaSize, input;
+'use strict'
 
-function autoSize() {
-    textareaSize.innerHTML = input.value + '\n';
+function clearInputDiv(container) {
+
+    while(container.lastChild) {
+        container.removeChild(container.lastChild);
+    }
+    document.getElementById("placeholder").classList.remove("hiding");
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    textContainer = document.querySelector('#textarea-container');
-    textareaSize = textContainer.querySelector('.textarea-size');
-    input = textContainer.querySelector('textarea');
+$("#text").keyup(function(event) {
 
-    autoSize();
-    input.addEventListener('input', autoSize);
+    let area = document.getElementById("text");
+    if (area.innerText.length < 1 || area.innerText === "\n") {
+        clearInputDiv(area);
+    }
 });
 
 $("#text").keypress(function(event) {
+
+    if (event.which != 8) {
+        document.getElementById("placeholder").classList.add("hiding");
+    }
+
     if (event.which == 13 && !event.shiftKey) {
         event.preventDefault();
         sendMessage();

@@ -13,7 +13,7 @@ let localLang = "";
 
 function loginClicked(login) {
 
-    let loginStr = login.lastChild.innerText;
+    let loginStr = login.lastElementChild.innerText;
 
     let conv = convsArray[loginStr];
     if (conv === undefined) {
@@ -27,7 +27,7 @@ function createConversationObj(login) {
     let conversation = new Conversation(login, new Preview(login));
     let convsList = $("#convs-list")[0];
     let previewContainer = conversation.previewContainer.createContainer();
-    previewContainer.addEventListener("click", function() {
+    previewContainer.addEventListener("click", () => {
         setConvWindow(conversation, login);
     });
     convsList.appendChild(previewContainer);
@@ -54,18 +54,14 @@ function prepareUserNode(login) {
     newUser.appendChild(div);
 
     newUser.classList.add('user');
-    newUser.addEventListener("click", function() {
-        loginClicked(this);
+    newUser.addEventListener("click", () => {
+        loginClicked(newUser);
     });
     return newUser;
 }
 
-function setOffline(user) {
-    user.firstElementChild.classList.add("offline")
-}
-
-function setOnline(user) {
-    user.firstElementChild.classList.remove("offline");
+function toggleOffline(user) {
+    user.firstElementChild.classList.toggle("offline");
 }
 
 function addUser(user) {
@@ -83,7 +79,7 @@ function addUser(user) {
         }
     }
 
-    setOnline(usersContainer.children[index]);
+    toggleOffline(usersContainer.children[index]);
     updateUsersCount();
 }
 
@@ -94,7 +90,7 @@ function removeUser(user) {
         return;
     }
 
-    setOffline(usersContainer.children[index]);
+    toggleOffline(usersContainer.children[index]);
     updateUsersCount();
 }
 
@@ -105,7 +101,6 @@ function readInitialData(body) {
     
     // initialize list of active users section
     users = initializer.onlineUsers.concat(initializer.offlineUsers);
-    console.log(users);
     // let userIndex = users.indexOf(userName);
     // users.splice(userIndex, 1);
     users.sort();
@@ -113,7 +108,7 @@ function readInitialData(body) {
         let node = prepareUserNode(users[i]);
         usersContainer.appendChild(node);
         if (initializer.onlineUsers.includes(users[i])) {
-            setOnline(node);
+            toggleOffline(node);
         }
     }
     updateUsersCount();
@@ -134,7 +129,7 @@ function showData(message) {
     console.log(message);
 }
 
-window.addEventListener("load", function() {
+window.addEventListener("load", () => {
     userName = document.getElementById("userName").innerText;
     connect();
     usersContainer = this.document.getElementById("users-list");
@@ -148,29 +143,29 @@ function connect() {
     let socket = new SockJS('/websocket');
     stompClient = Stomp.over(socket);
 
-    stompClient.connect({}, function () {
+    stompClient.connect({}, () => {
 
-        stompClient.subscribe("/app/activeclients", function (data) {
+        stompClient.subscribe("/app/activeclients", (data) => {
             readInitialData(data.body);
         });
 
-        stompClient.subscribe("/server/user.login", function (update) {
+        stompClient.subscribe("/server/user.login", (update) => {
             addUser(update.body);
         });
 
-        stompClient.subscribe("/server/user.logout", function (update) {
+        stompClient.subscribe("/server/user.logout", (update) => {
             removeUser(update.body);
         });
 
-        stompClient.subscribe("/conv/priv/" + userName, function (newMessage) {
+        stompClient.subscribe("/conv/priv/" + userName, (newMessage) => {
             handleNewMessage(newMessage.body);
         });
 
-        stompClient.subscribe("/conv/archive/" + userName, function(archived) {
+        stompClient.subscribe("/conv/archive/" + userName, (archived) => {
             handleArchivedMessages(archived.body);
         })
 
-        stompClient.subscribe('/server/update', function (greeting) {
+        stompClient.subscribe('/server/update', (greeting) => {
             showData(greeting);
         });
 
@@ -197,8 +192,8 @@ function setConvWindow(conv, login) {
     convPartner = login;
     $("#conv-partner").text(login);
 
-    textArea.value = "";
-    textArea.focus();
+    textArea.innerText = "";
+    clearInputDiv(textArea);
 
     let container = document.getElementById("messages-container");
     while(container.lastChild) {
@@ -222,9 +217,9 @@ function formatTime(date) {
 }
 
 function sendMessage() {
-    let content = textArea.value.trim();
-    textArea.value = "";
-    autoSize();
+    let content = textArea.innerText.trim();
+    textArea.innerText = "";
+    clearInputDiv(textArea);
 
     if (content.length == 0) {
         return;
@@ -249,9 +244,8 @@ function handleNewMessage(rawMessage) {
         convsArray[data.author] = conv;
     }
 
-    conv.addNewMessage(data.author,
-        data.content,
-        new Date(data.time));
+    conv.addNewMessage(data.author, data.content, new Date(data.time));
+    playSound("newmsg", {volume: .1});    
 }
 
 function handleArchivedMessages(rawMessage) {
@@ -294,3 +288,20 @@ function loadArchived() {
         }));
     }
 }
+
+function playsound() {
+    playSound("newmsg");
+}
+
+// function toggleSend() {
+//     document.getElementById("button-container").classList.toggle("hiding");
+// }
+
+
+// function showTime(author) {
+//     author.parentNode.lastElementChild.classList.toggle("hiding");
+// }
+
+// function toggleStatus(el) {
+//     el.firstElementChild.classList.toggle("offline");
+// }
