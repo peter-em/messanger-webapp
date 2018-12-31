@@ -31,7 +31,7 @@
 
         <div id="users-div" class="sidepanel">
             <div class="list-header">
-                <label>Active Users: </label>
+                <label>Active: </label>
                 <label id="active-count">0</label>
             </div>
             <div class="list">
@@ -48,37 +48,28 @@
 
         <div id="convs-div" class="sidepanel">
 
-            <div class="list-header">
+            <!-- <div class="list-header">
                 <label>Conversations</label>
-            </div>
+            </div> -->
 
             <div id="convs-list" class="list"></div>
         </div>
 
         <div id="conversation">
-            <div id="header-panel" class="list-header">
+            <div id="header-panel" class="list-header hiding">
                 <label id="conv-partner"></label>
+                <div id="close">✖</div>
             </div>
 
             <div id="scrollable">
                 <div class="spreader"></div>
                 <div id="messages-container">
-                    <!-- <div class="messages">
-                        <div class="time-info">22:22</div>
-                        <div class="message">
-                            <div class="author-div">Login</div>
-                            <div class="content-div">
-                                    Sample content
-                            </div>
-                            <div class="time-div hiding">22:22</div>
-                        </div>
-                    </div> -->
                 </div>
             </div>
             <div id="input-panel">
                 <div id="textarea-container">
-                    <div id="placeholder" contenteditable="true">Write your message</div>
-                    <div id="text"></div>
+                    <div id="placeholder">Write your message</div>
+                    <div id="text" contenteditable></div>
                 </div>
                 <div id="button-container" class="hiding">
                     <button id="msg-btn" class="button" onclick="sendMessage()">Send</button>

@@ -11,8 +11,12 @@ import java.util.stream.Collectors;
 public class ConnectionService {
 
     // mapping client's sessionID (key) with his email (value)
-    private Map<String, String> sessionMap = new ConcurrentHashMap<>();
+    private Map<String, String> sessionMap;
 
+    public ConnectionService() {
+        sessionMap = new ConcurrentHashMap<>();
+        sessionMap.put("empty", "NightBot");
+    }
 
     public void addSession(String sessionId, String login) {
         sessionMap.put(sessionId, login);

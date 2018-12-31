@@ -46,8 +46,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                    .antMatchers("/", LOGIN, "/registration").permitAll()
+                    .antMatchers("/", LOGIN, "/registration", "/resetPassword", "/changePassword*").permitAll()
                     .antMatchers("/js/**", "/css/**", "/images/**").permitAll()
+                    .antMatchers("/updatePassword").hasAuthority("CHANGE_PASSWORD")
                     .antMatchers("/messanger", "/app", "/logout", "/workinprogress").hasAuthority("USER")
                     .anyRequest().authenticated()
                     .and()
@@ -55,7 +56,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .formLogin()
                     .loginPage(LOGIN).failureUrl("/login?error=true")
                     .defaultSuccessUrl("/messanger")
-//                    .defaultSuccessUrl("/workinprogress")
                     .usernameParameter("email")
                     .passwordParameter("password")
                     .and()

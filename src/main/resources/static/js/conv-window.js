@@ -11,7 +11,11 @@ function createMessage(author, content, time, isOwner) {
     }
     element.innerText = author;
     element.addEventListener("click", () => {
-        message.lastElementChild.classList.toggle("hiding");
+        let visible = document.getElementsByClassName("unhide");
+        if (visible.length > 0 && visible[0] != element) {
+            visible[0].classList.remove("unhide");
+        }
+        message.lastElementChild.classList.toggle("unhide");
     });
     message.appendChild(element);
 
@@ -22,7 +26,6 @@ function createMessage(author, content, time, isOwner) {
 
     element = document.createElement("div");
     element.classList.add("time-div");
-    element.classList.add("hiding");
     element.innerText = time;
     message.appendChild(element);
     return message;

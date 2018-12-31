@@ -25,12 +25,17 @@
         <input type="password" th:placeholder="Password"
                id="password" name="password" class="form-control"/> <br/>
 
-        <div align="center" th:if="${param.error}">
+        <div allign="center" th:if="${param.error}">
             <p style="font-size: 20; color: #FF1C19;">Email or Password invalid, please verify</p>
         </div>
+        
         <button class="btn btn-lg btn-primary btn-block" name="Submit" value="Login" type="Submit"
                 th:text="Login"></button>
+        <a th:href="@{/resetPassword}">Forgot Your password?</a>
     </form>
+    <div class="server-message">
+        <span th:utext="${serverMessage}"></span>
+    </div>
 </div>
 </body>
 </html>

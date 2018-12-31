@@ -1,5 +1,4 @@
 html, body {
-    /* background-color: #ffffff; */
     background-color: #363636;
     color: #000000;
     margin: 0;
@@ -10,26 +9,19 @@ html, body {
 #app {
     min-width: 500px;
     max-width: 1000px;
-
     margin-left: auto;
     margin-right: auto;
-    /* margin-bottom: 1px; */
-
     height: 100%;
     display: flex;
     flex-flow: column;
 }
 
 .header {
-
-    /* display: none; */
     position: relative;
-
     background-color: #004080;
     color: #eeeeee;
     width: auto;
     margin-bottom: 6px;
-    /* border: 1px solid #999999; */
     display: flex;
     flex-flow: row;
     text-align: center;
@@ -38,15 +30,12 @@ html, body {
 
 .main {
     width: 100%;
-    /* height: 100%; */
     flex: 1;
     overflow: hidden;
-
 }
 
 .main > div {
     height: 100%;
-    /* border: 1px solid #999999; */
 }
 
 .footer {
@@ -55,7 +44,6 @@ html, body {
 }
 
 #username-div, #logout, .sidepanel {
-    /* width: 160px; */
     width: 20%;
 }
 
@@ -65,10 +53,6 @@ html, body {
 
 h3 {
     margin: 16px 0;
-}
-
-#userName {
-    color: darkcyan;
 }
 
 #logout {
@@ -90,7 +74,7 @@ a {
     transition: 0.25s;
 }
 
-a:hover {
+a:hover, li:hover, #userName, .owner, #close:hover {
     color: darkcyan;
 }
 
@@ -98,15 +82,11 @@ a:focus {
     outline: none;
 }
 
-
-
 .list-header {
+    font-family: "Lato", Helvetica, Arial, sans-serif;
     text-align: center;
-    background-color: #bbbbbb;
-    padding: 1px 0 2px 0;
-    /* height: 18px; */
-    height: 22px;
-    line-height: 22px;
+    background-color: #888888;
+    line-height: 25px;
 }
 
 .list {
@@ -130,11 +110,6 @@ li {
     text-align: left;
     transition: 0.1s;
     color: #eeeeee;
-}
-
-li:hover {
-    cursor: pointer;
-    color: darkcyan;
 }
 
 .user {
@@ -176,13 +151,10 @@ li:hover {
     display: none;
 }
 
-
-
 .sidepanel {
     display: flex;
     flex-flow: column;
     background-color: #555555;
-    /* background-color: #004080; */
 }
 
 /* conversations (rightside panel) styling */
@@ -199,10 +171,6 @@ li:hover {
     padding-bottom: 4px;
     text-align: left;
     height: 38px;
-}
-
-.conv:hover {
-    cursor: pointer;
 }
 
 .cactive, .conv:hover {
@@ -264,7 +232,7 @@ li:hover {
 /* main conv window styles */
 #conversation {
     overflow: hidden;
-    background-color: #dddddd;
+    background-color: #cccccc;
     display: flex;
     flex-flow: column;
 }
@@ -289,7 +257,7 @@ li:hover {
     min-height: 36px;
     display: flex;
     flex-flow: row;
-    background-color: #aaaaaa;
+    background-color: #888888;
 }
 
 
@@ -298,7 +266,6 @@ li:hover {
 }
 
 .messages {
-    /* min-height: 24px;   */
     font-family: sans-serif;
     font-size: 14px;
 }
@@ -320,29 +287,24 @@ li:hover {
 }
 
 .author-div {
-    width: 66px;
+    width: 70px;
     border-right: 1px solid #bbbbbb;
+
 }
 
-.author-div:hover {
+.author-div, li, #close, .conv {
     cursor: pointer;
-}
-
-.owner {
-    color: darkcyan;
 }
 
 .content-div {
     flex: 1;
-    padding: 0 3px;
+    padding: 0 4px 0 6px;
 
     overflow: hidden;
-
     word-wrap: break-word;  
 }
 
 .time-div {
-    /* width: 38px; */
     min-width: 26px;
     padding-left: 4px;
     color: #444444;
@@ -351,7 +313,7 @@ li:hover {
     font-size: 12px;
     line-height: 20px;
 
-    /* display: none; */
+    display: none;
 }
 
 .time {
@@ -388,12 +350,15 @@ li:hover {
     float: right;
 }
 
+.unhide {
+    display: block;
+}
+
 .hiding {
     display: none;
 }
 
 #text {
-    /* background-color: #bbbbbb; */
     background-color: #e3e3e3;
     border: 1px solid gray;
     overflow-y: hidden;
@@ -403,15 +368,12 @@ li:hover {
     word-wrap: break-word;
 }
 
-/* #text:read-write {
-
-} */
-
 #text:focus {
     border-color: #004080;
 }
 
 #placeholder {
+
     position: absolute;
     background-color: transparent;
     pointer-events: none;
@@ -419,3 +381,17 @@ li:hover {
     color: #909090;
 }
 
+#header-panel {
+    position: relative;
+    font-weight: bold;
+    font-size: 18px;
+    color: #eeeeee;
+    background-color: #004080;
+}
+
+#close {
+    position: absolute;
+    right: 18px;
+    top: 0;
+    font-size: 22px;
+}

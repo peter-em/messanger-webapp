@@ -12,6 +12,6 @@ import lombok.Setter;
 public class ConversationUpdate {
 
     private String partner;
-    private int unreadCount;
+    private int unread;
     private MessageDto message;
 }

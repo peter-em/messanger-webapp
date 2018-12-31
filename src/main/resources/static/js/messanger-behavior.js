@@ -8,20 +8,8 @@ let users = [];
 let usersContainer = {};
 let convsArray = [];
 let textArea = {};
-let offsetInMilliSec = (new Date()).getTimezoneOffset() * 60 * 1000;
 let localLang = "";
 
-function loginClicked(login) {
-
-    let loginStr = login.lastElementChild.innerText;
-
-    let conv = convsArray[loginStr];
-    if (conv === undefined) {
-        conv = createConversationObj(loginStr);
-        convsArray[loginStr] = conv;
-    }
-    setConvWindow(conv, loginStr);
-}
 
 function createConversationObj(login) {
     let conversation = new Conversation(login, new Preview(login));
@@ -55,7 +43,7 @@ function prepareUserNode(login) {
 
     newUser.classList.add('user');
     newUser.addEventListener("click", () => {
-        loginClicked(newUser);
+        setConvWindow(convsArray[login], login);
     });
     return newUser;
 }
@@ -83,7 +71,6 @@ function addUser(user) {
     updateUsersCount();
 }
 
-
 function removeUser(user) {
     let index = users.indexOf(user);
     if (index < 0) {
@@ -93,7 +80,6 @@ function removeUser(user) {
     toggleOffline(usersContainer.children[index]);
     updateUsersCount();
 }
-
 
 function readInitialData(body) {
 
@@ -119,8 +105,8 @@ function readInitialData(body) {
         let conv = createConversationObj(preview.partner);
         convsArray[preview.partner] = conv;
         let msg = preview.message;
-        preview.unreadCount = msg.author === userName ? 0 : preview.unreadCount;
-        conv.setPreviewMessage(msg.content, msg.time, preview.unreadCount);
+        preview.unread = msg.author === userName ? 0 : preview.unread;
+        conv.setPreviewMessage(msg.content, msg.time, preview.unread);
     }
 }
 
@@ -129,13 +115,37 @@ function showData(message) {
     console.log(message);
 }
 
+// initial method (connecting to server, initializing resources)
 window.addEventListener("load", () => {
     userName = document.getElementById("userName").innerText;
     connect();
     usersContainer = this.document.getElementById("users-list");
     textArea = this.document.getElementById("text");
+
+    document.querySelector("div[contenteditable]").addEventListener("paste", function(e) {
+        e.preventDefault();
+        var text = e.clipboardData.getData("text/plain");
+        document.execCommand("insertText", false, text);
+    });
+
+    let mutationObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            contentChanged();
+        });
+    });
+    mutationObserver.observe(textArea, {
+        characterData: true,
+        childList: true,
+    });
     textArea.contentEditable = false;
     localLang = this.window.navigator.language || this.window.navigator.userLanguage;
+
+    let close = document.getElementById("close");
+    close.addEventListener("click", () => {
+        setConvWindow(null, "");
+        textArea.contentEditable = false;
+        close.parentNode.classList.add("hiding");
+    });
 });
 
 
@@ -183,23 +193,24 @@ function disconnect() {
 }
 
 function setConvWindow(conv, login) {
+    if (convPartner === login) { return; }
 
-    // textArea.disabled = false;
-    textArea.contentEditable = true;
-    if (convPartner === login) {
-        return;
-    }
-
-    convPartner = login;
-    $("#conv-partner").text(login);
-
-    textArea.innerText = "";
     clearInputDiv(textArea);
-
     let container = document.getElementById("messages-container");
     while(container.lastChild) {
         container.removeChild(container.lastChild);
     }
+    
+    convPartner = login;
+    $("#conv-partner").text(login);
+    
+    if (login === "") { return; }
+
+    textArea.contentEditable = true;
+    document.getElementById("header-panel").classList.remove("hiding");
+    
+    if (!conv) { return; }
+
     container.appendChild(conv.messagesContainer);
     conv.setActive();
 
@@ -211,23 +222,21 @@ function setConvWindow(conv, login) {
 }
 
 
-// credits for this format solution:
-// https://stackoverflow.com/a/30272803
-function formatTime(date) {
-    return ("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2);
-}
-
 function sendMessage() {
     let content = textArea.innerText.trim();
-    textArea.innerText = "";
     clearInputDiv(textArea);
-
     if (content.length == 0) {
         return;
     }
+
+    let conv = convsArray[convPartner];
+    if (conv == undefined) {
+        conv = createConversationObj(convPartner);
+        convsArray[convPartner] = conv;
+        document.getElementById("messages-container").appendChild(conv.messagesContainer);
+    }
     
-    convsArray[convPartner].addNewMessage(userName, content, $.now());
-    
+    conv.addNewMessage(userName, content, $.now());
     let destination = "/app/priv/" + convPartner;
     stompClient.send(destination, {}, JSON.stringify( {
         'user': userName,
@@ -246,7 +255,8 @@ function handleNewMessage(rawMessage) {
     }
 
     conv.addNewMessage(data.author, data.content, new Date(data.time));
-    playSound("newmsg", {volume: .1});    
+
+    playSound("newmsg", {volume: .1});
 }
 
 function handleArchivedMessages(rawMessage) {
@@ -293,16 +303,3 @@ function loadArchived() {
 function playsound() {
     playSound("newmsg");
 }
-
-// function toggleSend() {
-//     document.getElementById("button-container").classList.toggle("hiding");
-// }
-
-
-// function showTime(author) {
-//     author.parentNode.lastElementChild.classList.toggle("hiding");
-// }
-
-// function toggleStatus(el) {
-//     el.firstElementChild.classList.toggle("offline");
-// }
